@@ -63,7 +63,7 @@ object ShortestPath {
     while (isUpdated) {
       isUpdated = false
       edges.foreach { e =>
-        if(distances(e.from) != Int.MaxValue
+        if (distances(e.from) != Int.MaxValue
           && distances(e.to) > distances(e.from) + e.distance) {
           distances = distances + (e.to -> (distances(e.from) + e.distance))
           isUpdated = true
@@ -76,7 +76,24 @@ object ShortestPath {
   }
 
   def solveByDijkstra(start: Char, goal: Char): Unit = {
-    ???
+    // 各頂点までの距離の初期化
+    var distances = vertexes.map(v => (v -> Int.MaxValue)).toMap
+    distances = distances + (start -> 0)
+    var usedEdges: Set[Edge] = Set()
+    var isUpdated = true
+    while (isUpdated) {
+      isUpdated = false
+      edges.foreach { e =>
+        if (!usedEdges.contains(e)
+          && distances(e.from) != Int.MaxValue
+          && distances(e.to) > distances(e.from) + e.distance) {
+          distances = distances + (e.to -> (distances(e.from) + e.distance))
+          usedEdges = usedEdges + e
+          isUpdated = true
+        }
+      }
+    }
+    println(distances)
+    println(distances(goal))
   }
-
 }
