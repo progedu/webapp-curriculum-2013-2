@@ -96,6 +96,7 @@ object ShortestPath {
     println(distances)
     println(distances(goal))
   }
-}
 
 }
+
+
