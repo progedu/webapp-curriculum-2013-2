@@ -76,7 +76,17 @@ object ShortestPath {
   }
 
   def solveByDijkstra(start: Char, goal: Char): Unit = {
-    ???
+    // 各頂点までの距離の初期化
+    var distances = vertexes.map(v => (v -> Int.MaxValue)).toMap
+    distances = distances + (start -> 0)
+    edges.foreach { e =>
+      if (distances(e.from) != Int.MaxValue
+        && distances(e.to) > distances(e.from) + e.distance) {
+        distances = distances + (e.to -> (distances(e.from) + e.distance))
+      }
+    }
+    println(distances)
+    println(distances(goal))
   }
 
 }
