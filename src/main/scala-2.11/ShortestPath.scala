@@ -1,3 +1,5 @@
+import scala.collection.mutable.PriorityQueue
+
 /**
   * Created by soichiro_yoshimura on 2016/06/27.
   */
@@ -76,7 +78,31 @@ object ShortestPath {
   }
 
   def solveByDijkstra(start: Char, goal: Char): Unit = {
-    ???
-  }
+    // 各頂点までの距離の初期化
+    var distances = vertexes.map(v => (v -> Int.MaxValue)).toMap
+    var flags = vertexes.map(v => (v -> false)).toMap
+    distances = distances updated(start, 0)
 
+    var q = new PriorityQueue[(Int, Char)]
+    q.enqueue((0, start))
+
+    while (!q.isEmpty) {
+      val (dist, from) = q.head
+      q.dequeue()
+      flags = flags updated(from, true)
+
+      if (!(distances(from) < dist * (-1))) {
+        for (e <- edges if e.from == from) {
+          val upDist = distances(from) + e.distance
+          if (!flags(e.to) && distances(e.to) > upDist) {
+            distances = distances updated(e.to, upDist)
+            q.enqueue((distances(e.to) * -1, e.to))
+          }
+        }
+      }
+    }
+
+    println(distances)
+    println(distances(goal))
+  }
 }
