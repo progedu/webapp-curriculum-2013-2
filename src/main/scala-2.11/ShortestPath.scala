@@ -75,8 +75,25 @@ object ShortestPath {
     println(distances(goal))
   }
 
-  def solveByDijkstra(start: Char, goal: Char): Unit = {
-    ???
+    def solveByDijkstra(start: Char, goal: Char): Unit = {
+    var isUpdatedDone = false
+    var distances = vertex.map(v =>(v -> Int.MaxValue)).toMap
+    var dones = vertex.map(v => (v -> isUpdatedDone)).toMap
+    distances = distances + (start -> 0)
+
+    var isUpdated = true
+    while (isUpdated){
+      isUpdated = false
+      edges.foreach(e =>
+        if(distances(e.from) != Int.MaxValue && distances(e.to) > distances(e.from) + e.distance && dones(e.to) == false){
+          distances = distances + (e.to -> (distances(e.from) + e.distance))
+          isUpdated = true
+          dones(e.from) == true
+        }
+      )
+    }
+    println(distances)
+    println(distances(goal))
   }
 
 }
