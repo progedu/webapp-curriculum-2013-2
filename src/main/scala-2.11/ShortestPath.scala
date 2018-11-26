@@ -76,7 +76,60 @@ object ShortestPath {
   }
 
   def solveByDijkstra(start: Char, goal: Char): Unit = {
-    ???
-  }
 
+    // 各頂点までの距離と直前の頂点の初期化 Map[node:Char -> (distance: Int, prevNode: Char)]    
+    var nodes: Map[Char, (Int, Char)] = vertexes.map(v => v -> (Int.MaxValue, '_')).toMap
+    nodes = nodes + (start -> (0, '_'))
+
+    // キュー
+    var queueEdges = edges        // Seq(Edge): 辺、前後の頂点とその頂点間のの距離を保持
+    var queueNodes = nodes.keys   // List[Char]: 各頂点のノード名を保持
+
+    // 本計算
+    // キュー が空になるまで
+    while (queueEdges.nonEmpty) {
+      // d(u) が最小である頂点uを見つける
+      var u = '_'
+      var minVal = Int.MaxValue
+      queueNodes.foreach {e =>
+        val (distance, _) = nodes(e)
+        // より小さい距離を保持する頂点を見つけたら、そこが始点uになるように更新
+        if (minVal > distance) {
+          minVal = distance
+          u = e
+        }
+      }
+      
+      val subQueue = queueEdges.filter(_.from == u)　// キュー から d(u) が最小である頂点uを取り出す
+      queueEdges = queueEdges.filter(_.from != u)   // キューを更新：頂点uを始点とする辺をキューから取り除く
+      queueNodes = queueNodes.filter(k => k != u)   // キューを更新：頂点uのノード名をキューから取り除く
+
+
+      // for each ( u から辺が伸びている各頂点 v )
+      subQueue.foreach { e =>
+        val (uDistance, _) = nodes(e.from)    // 始点となる頂点uまでの距離
+        val (vDistance, _) = nodes(e.to)      // 終点となる頂点vまでの距離
+        // if ( d(v) > d(u) + length(u,v) )
+        if (vDistance > (uDistance + e.distance))
+          nodes = nodes + (e.to -> (uDistance + e.distance, e.from)) // distanceとprevの更新
+      }
+
+    }
+    // 探索の結果表示
+    println(nodes)
+
+    // スタートからゴールまでの経路を取得
+    var paths: Seq[Char] = Seq()  
+    var path = goal
+    while(path != '_') {
+      paths = paths :+ path
+      val (_ , prev) = nodes(path)
+
+      path = prev
+    }
+    paths = paths.reverse
+
+    // スタートからゴールまでの経路表示
+    println(paths)
+  }
 }
