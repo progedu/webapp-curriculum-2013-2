@@ -75,8 +75,42 @@ object ShortestPath {
     println(distances(goal))
   }
 
+  // ダイクストラ法用のケースクラス
+  case class Node(name: Char, minDistance: Int, edges: Seq[Edge], isFix: Boolean)
+
   def solveByDijkstra(start: Char, goal: Char): Unit = {
-    ???
+    def dijkstraLoop(nodes: Seq[Node]): Seq[Node] = nodes.find(n => !n.isFix) match {
+      case Some(_) => {
+        // 未確定ノードの中から最小値のノードを取り出す
+        val selectNode = nodes.foldLeft(Node('0', Int.MaxValue, Seq(), false))((acc, n) => if (acc.minDistance > n.minDistance && !n.isFix) n else acc)
+
+        // 取り出したノードを確定ノードとする
+        val fixedNodes = nodes.map(n => if(n.name == selectNode.name) n.copy(isFix = true) else n)
+
+        // 選択したノードへ接続しているノードの最短距離を更新する
+        val updatedNodes = selectNode.edges.foldLeft(fixedNodes) { (acc, e) =>
+          acc.map( n => {
+            if (e.to == n.name) {
+              val calcDistance = selectNode.minDistance + e.distance
+              if (n.minDistance > calcDistance) n.copy(minDistance = calcDistance) else n
+            }
+            else n
+          })
+        }
+        // 次のループへ
+        dijkstraLoop(updatedNodes)
+      }
+      case None => nodes
+    }
+
+    // スタートノードの距離を０とし、その他のノードの距離を無限大にする
+    val nodes = vertexes.map(n => Node(n, if (n == start) 0 else Int.MaxValue, edges.filter(e => e.from == n), false))
+
+    // ダイクストラ法の実行
+    val result = dijkstraLoop(nodes)
+
+    println(result.map(n => (n.name -> n.minDistance)).toMap)
+    result.find(n => n.name == goal).foreach(n => println(n.minDistance))
   }
 
 }
