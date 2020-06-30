@@ -1,4 +1,4 @@
-object dijkstra {
+object ShortestPath {
   //頂点
   val vertexes='A'to'N'
 
@@ -25,7 +25,7 @@ object dijkstra {
     Edge('M','N',2),
   )
 
-  def dijkstra(start:Char,goal:Char):Unit={
+  def solvedByDijkstra(start:Char,goal:Char):Unit={
     var distances =vertexes.map(v=>(v -> Int.MaxValue)).toMap
     var Visited=edges.map(v=>(v-> false)).toMap
     distances=distances+(start->0)
