@@ -89,6 +89,7 @@ object ShortestPath {
           && distances(e.from) != Int.MaxValue
           && distances(e.to) > distances(e.from) + e.distance) {
           distances = distances + (e.to -> ((distances(e.from) + e.distance)))
+          usedEdges = usedEdges + e
           isUpdated = true
         }
       }
