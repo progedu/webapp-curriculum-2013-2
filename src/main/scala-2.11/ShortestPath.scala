@@ -76,7 +76,26 @@ object ShortestPath {
   }
 
   def solveByDijkstra(start: Char, goal: Char): Unit = {
-    ???
+    // 各頂点までの距離の初期化
+    var distances = vertexes.map(v => (v -> Int.MaxValue)).toMap
+    distances = distances + (start -> 0)
+
+    var isUpdated = true
+    while (isUpdated) {
+      isUpdated = false
+      edges.foreach { e =>
+        val vertex = 'A' to e.from
+        if(distances(e.from) != Int.MaxValue
+          && distances(e.to) > distances(e.from) + e.distance
+          && !vertex.contains(e.to) ) {
+          distances = distances + (e.to -> (distances(e.from) + e.distance))
+          isUpdated = true
+        }
+      }
+    }
+
+    println(distances)
+    println(distances(goal))
   }
 
 }
