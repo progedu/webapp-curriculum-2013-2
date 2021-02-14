@@ -1,18 +1,15 @@
-/**
-  * Created by soichiro_yoshimura on 2016/06/27.
-  */
 case class Edge(from: Char, to: Char, distance: Int)
 
 object ShortestPath {
 
   /**
-    * 頂点
-    */
+   * 頂点
+   */
   val vertexes = 'A' to 'N'
 
   /**
-    * 辺
-    */
+   * 辺
+   */
   val edges = Seq(
     Edge('A', 'B', 9),
     Edge('A', 'C', 6),
@@ -71,12 +68,58 @@ object ShortestPath {
       }
     }
 
-    println(distances)
-    println(distances(goal))
+//    println(distances)
+//    println(distances(goal))
   }
 
-  def solveByDijkstra(start: Char, goal: Char): Unit = {
-    ???
+  def solveByDijkstra(start: Char, goal: Char, _edges: Seq[Edge]= edges): Unit = {
+    // 初期化
+    var distances = vertexes.map(v => (v -> Int.MaxValue)).toMap
+    distances = distances + (start -> 0)
+    var edges = _edges
+    var trash: Set[Edge] = Set()
+    var isUpdated = true
+
+    while (isUpdated) {
+      isUpdated = false
+      edges.foreach { e =>
+        if(distances(e.from) != Int.MaxValue) {
+          if (distances(e.to) > distances(e.from) + e.distance)
+          {
+            distances = distances + (e.to -> (distances(e.from) + e.distance))
+            isUpdated = true
+          }
+          trash = trash + e
+        }
+      }
+      edges = edges.filterNot(trash contains( _))
+    }
+
+//    println(distances)
+//    println(distances(goal))
+  }
+
+  def speedTest(): Unit = {
+    val start = vertexes.head
+    val goal = vertexes.last
+    val repeat = 1000
+    var results = Seq.empty[Long]
+    var startTime: Long = 0
+    var endTime: Long = 0
+
+    startTime = System.currentTimeMillis
+    for (i <- 0 until repeat) solveByBellmanFord(start, goal)
+    endTime = System.currentTimeMillis - startTime
+    results = results :+ endTime
+
+    startTime = System.currentTimeMillis
+    for (i <- 0 until repeat) solveByDijkstra(start, goal)
+    endTime = System.currentTimeMillis - startTime
+    results = results :+ endTime
+
+    println(s"BellmanFord: ${results(0)}")
+    println(s"Dijkstra: ${results(1)}")
+
   }
 
 }
